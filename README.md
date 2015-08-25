@@ -28,7 +28,7 @@ The `SWARM_*` environment variables are _not_ used.
 
 ## Executing without docker
 
-If you don't want to execute this from a Docker container, call the `benchmark.py` script directly. You need the `requests` module installed (`pip install requests` or `sudopip install requests`). The command line arguments mentioned above apply here just the same:
+If you don't want to execute this from a Docker container, call the `benchmark.py` script directly. You need the `requests` module installed (`pip install requests` or `sudo pip install requests`). The command line arguments mentioned above apply here just the same:
 
 ```
 $ python benchmark.py -u <username> -t <token>
