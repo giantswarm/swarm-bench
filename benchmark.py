@@ -3,6 +3,8 @@ import argparse
 import time
 import sys
 import logging
+import random
+import string
 
 """
 Giant Swarm API benchmark
@@ -29,7 +31,7 @@ def main():
 
     logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 
-    print("duration,label,route,statuscode")
+    print("duration,label,request_id,route,statuscode")
 
     for n in range(args.repetitions):
         call_ping()
@@ -43,14 +45,19 @@ def main():
                 for service in services:
                     if "service" in service:
                         call_service_status(org, env["name"], service["service"])
-    #print(timings)
 
+def generate_request_id(size=8):
+    chars = string.ascii_lowercase + string.digits
+    return "swarmbench-" + ''.join(random.choice(chars) for _ in range(size))
 
 def get_request(uri, label):
     global args
     url = args.api_endpoint + uri
+    request_id = generate_request_id()
     headers = {
-        "Authorization": "giantswarm " + args.token
+        "User-Agent": "swarmbench",
+        "Authorization": "giantswarm " + args.token,
+        "X-Request-ID": request_id
     }
     if args.cluster_id:
         headers["X-Giant-Swarm-ClusterID"] = args.cluster_id
@@ -61,7 +68,8 @@ def get_request(uri, label):
         "label": label,
         "route": uri,
         "duration": duration,
-        "status_code": r.status_code
+        "status_code": r.status_code,
+        "request_id": request_id
     }
     timings.append(datarow)
     print(",".join([str(datarow[x]) for x in sorted(datarow.keys())]))
