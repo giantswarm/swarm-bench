@@ -6,8 +6,14 @@ data <- read.csv("./data.csv")
 ggplot(data, aes(factor(label), duration)) + geom_boxplot() + 
   labs(title="Duration of API calls") +
   xlab("API Call") +
-  ylab("Duration (Seconds)") +
-  scale_y_log10()
+  ylab("Duration (Seconds)")
+
+## Log scale - useful for very large Y differences
+#ggplot(data, aes(factor(label), duration)) + geom_boxplot() + 
+#  labs(title="Duration of API calls") +
+#  xlab("API Call") +
+#  ylab("Duration (Seconds)") +
+#  scale_y_log10()
 
 listServicesData <- data[data$label == "ListServices", ]
 ggplot(listServicesData, aes(factor(route), duration)) + geom_boxplot() + 
