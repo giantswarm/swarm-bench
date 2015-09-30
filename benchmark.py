@@ -31,6 +31,10 @@ def main():
 
     logging.basicConfig(stream=sys.stderr, level=logging.ERROR)
 
+    if args.token is None:
+        sys.stderr.write("Please provide a valid auth token using the -t/--token flag.\n")
+        sys.exit(1)
+
     print("duration,label,request_id,route,statuscode")
 
     for n in range(args.repetitions):
@@ -74,7 +78,11 @@ def get_request(uri, label):
     timings.append(datarow)
     print(",".join([str(datarow[x]) for x in sorted(datarow.keys())]))
     if r.status_code != 200:
-        sys.stderr.write("ERROR: %s failed with status code %s\n" % (url, r.status_code))
+        if r.status_code == 401:
+            sys.stderr.write("ERROR: HTTP status 401 (Unauthorized) received. The login token provided is invalid/expired.\n")
+            sys.exit(2)
+        else:
+            sys.stderr.write("ERROR: %s failed with status code %s\n" % (url, r.status_code))
     return r
 
 
